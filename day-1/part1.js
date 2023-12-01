@@ -1,5 +1,5 @@
-const { testCases, testString, testResult } = require("./part1-test-cases");
-const { data1 } = require("./part1-data");
+const { testCases, testString, testResult } = require("./src/part1-test-cases");
+const { data1 } = require("./src/part1-data");
 
 function findCalibrationValue(string) {
   function findFarLeft(str) {

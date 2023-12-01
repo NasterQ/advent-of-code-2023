@@ -1,4 +1,4 @@
-const { testData } = require("./part2-test-data");
+const { testData } = require("./src/part2-test-data");
 
 function findNumbers(text) {
   const lines = text.split("\n");
