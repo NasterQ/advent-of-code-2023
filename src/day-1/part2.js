@@ -1,5 +1,5 @@
-const { data2 } = require("./src/part2-data");
-const { testData } = require("./src/part2-test-data");
+const { data2 } = require("./data/part2-data");
+const { testData } = require("./data/part2-test-data");
 
 const test1 = "asaonetwothree4fivesixonetwoone";
 const test2 = "onethreeonetwo";
