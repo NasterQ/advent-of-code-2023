@@ -3,7 +3,7 @@ type TCoords = [number, number];
 
 interface IndexedSymbol {
   symbol: string;
-  indexes: number | number[];
+  indexes: number[];
 }
 
 interface SymbolsList {
@@ -29,7 +29,7 @@ const findSymbols = (stringData: string[], regex: RegExp): SymbolsList[] =>
     row: i,
     symbols: [...row.matchAll(regex)].map((numberInfo: RegExpMatchArray) => ({
       symbol: numberInfo[0],
-      indexes: numberInfo[0].length === 1 ? numberInfo.index! : range(numberInfo[0].length, numberInfo.index!)
+      indexes: numberInfo[0].length === 1 ? [numberInfo.index!] : range(numberInfo[0].length, numberInfo.index!)
     }))
   }));
 
@@ -40,44 +40,42 @@ const dataRows: string[] = splitData(data);
 const numbersIndexes: SymbolsList[] = findSymbols(dataRows, regNumbers);
 const symbolsIndexes: SymbolsList[] = findSymbols(dataRows, regSymbols);
 
-console.dir(numbersIndexes, { depth: null });
-console.log('========================');
-console.dir(symbolsIndexes, { depth: null });
-console.log('========================');
+// console.dir(numbersIndexes, { depth: null });
+// console.log('========================');
+// console.dir(symbolsIndexes, { depth: null });
+// console.log('========================');
 
-const res: any = symbolsIndexes.reduce((partNumbers, symbolRow, i: number) => {
+const res: number[] = symbolsIndexes.reduce((partNumbers: number[], symbolRow: SymbolsList, i: number) => {
   const row: number = symbolRow.row;
   const symbolNumbers: IndexedSymbol[] = symbolRow.symbols;
-  // console.log(symbolRow);
-  // console.log('-----');
 
   if (symbolNumbers.length === 0) return partNumbers;
 
-  const numbers: any = symbolNumbers.reduce((acc, curr) => {
-    console.log(curr, i);
-    console.log('====');
-
+  const numbers: number[] = symbolNumbers.reduce((acc: number[], curr: IndexedSymbol) => {
     // find numbers on adjacent rows
-    const numbersOnRow: any = [-1, 0, 1].reduce((acc: SymbolsList[], j: number) => {
-      const numbersOnRow: any = numbersIndexes.find((indexList: SymbolsList) => indexList.row === i + j);
+    const numbersOnRow: SymbolsList[] = [-1, 0, 1].reduce((acc: SymbolsList[], j: number) => {
+      const numbersOnRow: SymbolsList | undefined = numbersIndexes.find(
+        (indexList: SymbolsList) => indexList.row === i + j
+      );
       // console.dir(numbersOnRow, { depth: null });
-      return [...acc, numbersOnRow];
+      return numbersOnRow !== undefined ? [...acc, numbersOnRow] : acc;
     }, []);
-    console.dir(numbersOnRow, { depth: null });
-    const adjacentNumbers: any = [-1, 0, 1].reduce((acc: number[], j: number) => {
-      const foundNumbers: any = numbersOnRow.reduce((acc2: number[], row: SymbolsList) => {
-        const numbers: any = row.symbols.reduce((symbolAcc: number[], symbol: IndexedSymbol) => {
-          if (symbol.indexes.)
-          console.log(symbol);
-          console.log(curr);
+    // console.dir(numbersOnRow, { depth: null });
+    const adjacentNumbers: number[] = [-1, 0, 1].reduce((acc2: number[], j: number) => {
+      const foundNumbers: number[] = numbersOnRow.reduce((acc3: number[], row: SymbolsList) => {
+        const numbers: number[] = row.symbols.reduce((symbolAcc: number[], symbol: IndexedSymbol) => {
+          console.log(symbol, curr, curr.indexes[0] + j, symbol.indexes.includes(curr.indexes[0] + j));
 
-          return symbolAcc;
+          if (symbol.indexes.includes(curr.indexes[0] + j)) return [...symbolAcc, parseInt(symbol.symbol)];
+          else return symbolAcc;
         }, []);
-      });
-      // return [...acc, ...foundNumbers];
-      return acc;
+        return [...acc3, ...numbers];
+      }, []);
+      return [...acc2, ...foundNumbers];
     }, []);
-    return acc;
+    return [...acc, ...adjacentNumbers];
   }, []);
-  return partNumbers;
+  return [...partNumbers, ...numbers];
 }, []);
+
+console.log(res);
