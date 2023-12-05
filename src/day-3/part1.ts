@@ -37,15 +37,11 @@ function getPartNumbers(partIndexes: SymbolsList[]): number[] {
         const numbersOnRow: SymbolsList | undefined = numbersIndexes.find(
           (indexList: SymbolsList) => indexList.row === i + j
         );
-        // console.dir(numbersOnRow, { depth: null });
         return numbersOnRow !== undefined ? [...acc, numbersOnRow] : acc;
       }, []);
-      // console.dir(numbersOnRow, { depth: null });
       const adjacentNumbers: number[] = [-1, 0, 1].reduce((acc2: number[], j: number) => {
         const foundNumbers: number[] = numbersOnRow.reduce((acc3: number[], row: SymbolsList) => {
           const numbers: number[] = row.symbols.reduce((symbolAcc: number[], symbol: IndexedSymbol) => {
-            // console.log(symbol, curr, curr.indexes[0] + j, symbol.indexes.includes(curr.indexes[0] + j));
-
             if (symbol.indexes.includes(curr.indexes[0] + j)) {
               // Eliminate unwanted duplicates
               symbol.indexes = [-5];
@@ -70,11 +66,6 @@ const regSymbols: RegExp = /[^0-9.]/g;
 
 const dataRows: string[] = splitData(data);
 const symbolsIndexes: SymbolsList[] = findSymbols(dataRows, regSymbols);
-
-// console.dir(numbersIndexes, { depth: null });
-// console.log('========================');
-// console.dir(symbolsIndexes, { depth: null });
-// console.log('========================');
 
 const result: number = partSum(getPartNumbers(symbolsIndexes));
 console.log(result);

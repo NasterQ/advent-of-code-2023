@@ -42,17 +42,13 @@ function getPartNumbers(partIndexes: SymbolsList[], type: PartType = PartType.NO
         const numbersOnRow: SymbolsList | undefined = numbersIndexes.find(
           (indexList: SymbolsList) => indexList.row === i + j
         );
-        // console.dir(numbersOnRow, { depth: null });
         return numbersOnRow !== undefined ? [...acc, numbersOnRow] : acc;
       }, []);
-      // console.dir(numbersOnRow, { depth: null });
       const adjacentNumbers: number[] = [-1, 0, 1].reduce((acc2: number[], j: number) => {
         const foundNumbers: number[] = numbersOnRow.reduce((acc3: number[], row: SymbolsList) => {
           const numbers: number[] = row.symbols.reduce((symbolAcc: number[], symbol: IndexedSymbol) => {
-            // console.log(symbol, curr, curr.indexes[0] + j, symbol.indexes.includes(curr.indexes[0] + j));
-
             if (symbol.indexes.includes(curr.indexes[0] + j)) {
-              // Eliminate unwanted duplicates - [not clean - changes array outside]
+              // Eliminate unwanted duplicates
               symbol.indexes = [-5];
               return [...symbolAcc, parseInt(symbol.symbol)];
             } else return symbolAcc;
@@ -72,9 +68,6 @@ function getPartNumbers(partIndexes: SymbolsList[], type: PartType = PartType.NO
 
 const partSum = (numbers: number[]): number => numbers.reduce((sum: number, number: number) => sum + number, 0);
 
-// console.dir(numbersIndexes, { depth: null });
-// console.log(partNumbers);
-
 const regNumbers: RegExp = /[0-9]+/g;
 const regParts: RegExp = /[^0-9.*]/g;
 const regPossibleGears: RegExp = /\*/g;
@@ -85,11 +78,6 @@ const possibleGearsIndexes: SymbolsList[] = findSymbols(dataRows, regPossibleGea
 
 const partsNumbers: number[] = getPartNumbers(partsIndexes);
 const gearsNumbers: number[] = getPartNumbers(possibleGearsIndexes, PartType.GEARS);
-
-// console.dir(numbersIndexes, { depth: null });
-// console.log('========================');
-// console.dir(symbolsIndexes, { depth: null });
-// console.log('========================');
 
 const resultWithoutAsterisks: number = partSum(partsNumbers);
 const resultWithAsterisks: number = partSum(gearsNumbers);
