@@ -37,7 +37,6 @@ const symbolsIndexes: SymbolsList[] = findSymbols(dataRows, regSymbols);
 // console.log('========================');
 
 const partNumbers: number[] = symbolsIndexes.reduce((partNumbers: number[], symbolRow: SymbolsList, i: number) => {
-  const row: number = symbolRow.row;
   const symbolNumbers: IndexedSymbol[] = symbolRow.symbols;
 
   if (symbolNumbers.length === 0) return partNumbers;
