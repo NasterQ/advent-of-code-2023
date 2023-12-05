@@ -1,5 +1,5 @@
-import { testData1 as data } from './data/part1-test-data';
-type TCoords = [number, number];
+// import { testData1 as data } from './data/part1-test-data';
+import { data1 as data } from './data/part1-data';
 
 interface IndexedSymbol {
   symbol: string;
@@ -12,15 +12,6 @@ interface SymbolsList {
 }
 
 const splitData = (textData: string): string[] => textData.split('\n');
-const createEngineArray = (textData: string[]): string[][] => textData.map((row: string) => Array.from(row));
-const findSymbolsIndexes = (matrixData: string[][], omitRegex: RegExp): TCoords[][] =>
-  matrixData.map((row: string[], y: number): TCoords[] =>
-    row.reduce(
-      (indexes: TCoords[], currSymbol: string, x: number): TCoords[] =>
-        omitRegex.test(currSymbol) ? indexes : [...indexes, [x, y]],
-      []
-    )
-  );
 
 const range = (size: number, startAt: number = 0): number[] => [...Array(size).keys()].map((i: number) => i + startAt);
 
@@ -45,7 +36,7 @@ const symbolsIndexes: SymbolsList[] = findSymbols(dataRows, regSymbols);
 // console.dir(symbolsIndexes, { depth: null });
 // console.log('========================');
 
-const res: number[] = symbolsIndexes.reduce((partNumbers: number[], symbolRow: SymbolsList, i: number) => {
+const partNumbers: number[] = symbolsIndexes.reduce((partNumbers: number[], symbolRow: SymbolsList, i: number) => {
   const row: number = symbolRow.row;
   const symbolNumbers: IndexedSymbol[] = symbolRow.symbols;
 
@@ -64,13 +55,17 @@ const res: number[] = symbolsIndexes.reduce((partNumbers: number[], symbolRow: S
     const adjacentNumbers: number[] = [-1, 0, 1].reduce((acc2: number[], j: number) => {
       const foundNumbers: number[] = numbersOnRow.reduce((acc3: number[], row: SymbolsList) => {
         const numbers: number[] = row.symbols.reduce((symbolAcc: number[], symbol: IndexedSymbol) => {
-          console.log(symbol, curr, curr.indexes[0] + j, symbol.indexes.includes(curr.indexes[0] + j));
+          // console.log(symbol, curr, curr.indexes[0] + j, symbol.indexes.includes(curr.indexes[0] + j));
 
-          if (symbol.indexes.includes(curr.indexes[0] + j)) return [...symbolAcc, parseInt(symbol.symbol)];
-          else return symbolAcc;
+          if (symbol.indexes.includes(curr.indexes[0] + j)) {
+            // Eliminate unwanted duplicates - [not clean - changes array outside]
+            symbol.indexes = [-5];
+            return [...symbolAcc, parseInt(symbol.symbol)];
+          } else return symbolAcc;
         }, []);
         return [...acc3, ...numbers];
       }, []);
+
       return [...acc2, ...foundNumbers];
     }, []);
     return [...acc, ...adjacentNumbers];
@@ -78,4 +73,9 @@ const res: number[] = symbolsIndexes.reduce((partNumbers: number[], symbolRow: S
   return [...partNumbers, ...numbers];
 }, []);
 
-console.log(res);
+// console.dir(numbersIndexes, { depth: null });
+// console.log(partNumbers);
+
+const partSum = (numbers: number[]): number => numbers.reduce((sum: number, number: number) => sum + number, 0);
+const result: number = partSum(partNumbers);
+console.log(result);
