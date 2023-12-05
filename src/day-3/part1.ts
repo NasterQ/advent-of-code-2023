@@ -54,7 +54,6 @@ function getPartNumbers(partIndexes: SymbolsList[]): number[] {
           }, []);
           return [...acc3, ...numbers];
         }, []);
-
         return [...acc2, ...foundNumbers];
       }, []);
       return [...acc, ...adjacentNumbers];
