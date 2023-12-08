@@ -1,4 +1,4 @@
-// import { testData1 as data } from './data/part1-test-data';
+// import { testData13 as data } from './data/part1-test-data';
 import { data1 as data } from './data/part1-data';
 
 interface CardValue {
@@ -9,7 +9,6 @@ const cardValues: CardValue = {
   'A': 14,
   'K': 13,
   'Q': 12,
-  'J': 11,
   'T': 10,
   '9': 9,
   '8': 8,
@@ -18,7 +17,8 @@ const cardValues: CardValue = {
   '5': 5,
   '4': 4,
   '3': 3,
-  '2': 2
+  '2': 2,
+  'J': 1
 };
 
 enum HandTypeValue {
@@ -75,14 +75,20 @@ const getHandType = (gameInfo: BasicGameInfo): AdvancedGameInfo => {
     return cardsAcc;
   }, {});
 
-  const sortedCards: [string, number][] = Object.entries(cards).sort(
-    ([key1, value1]: [string, number], [key2, value2]: [string, number]) =>
-      value2 - value1 || cardValues[key2] - cardValues[key1]
-  );
-
+  const sortedCards: [string, number][] = Object.entries(cards)
+    .sort(
+      ([key1, value1]: [string, number], [key2, value2]: [string, number]) =>
+        value2 - value1 || cardValues[key2] - cardValues[key1]
+    )
+    .filter((card: [string, number]) => card[0] !== 'J');
   const topTwoValues: [string, number][] = [sortedCards[0], sortedCards[1]];
 
-  switch (topTwoValues[0][1]) {
+  const foundJokers: [string, number] = Object.entries(cards).filter(
+    ([symbol]: [string, number]) => symbol === 'J'
+  )[0] || ['J', 0];
+  const jokers: number = foundJokers[1];
+
+  switch ((topTwoValues[0]?.[1] || 0) + jokers) {
     case 5:
       return createGameInfo(HandType.FIVE_OF_A_KIND, HandTypeValue.FIVE_OF_A_KIND);
     case 4:

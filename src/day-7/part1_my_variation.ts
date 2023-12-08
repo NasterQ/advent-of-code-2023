@@ -1,5 +1,5 @@
-// import { testData1 as data } from './data/part1-test-data';
-import { data1 as data } from './data/part1-data';
+import { testData1 as data } from './data/part1-test-data';
+// import { data1 as data } from './data/part1-data';
 
 interface CardValue {
   [key: string]: number;
@@ -84,17 +84,29 @@ const getHandType = (gameInfo: BasicGameInfo): AdvancedGameInfo => {
 
   switch (topTwoValues[0][1]) {
     case 5:
-      return createGameInfo(HandType.FIVE_OF_A_KIND, HandTypeValue.FIVE_OF_A_KIND);
+      return createGameInfo(HandType.FIVE_OF_A_KIND, HandTypeValue.FIVE_OF_A_KIND + 5 * cardValues[topTwoValues[0][0]]);
     case 4:
-      return createGameInfo(HandType.FOUR_OF_A_KIND, HandTypeValue.FOUR_OF_A_KIND);
+      return createGameInfo(HandType.FOUR_OF_A_KIND, HandTypeValue.FOUR_OF_A_KIND + 4 * cardValues[topTwoValues[0][0]]);
     case 3:
-      if (topTwoValues[1][1] === 2) return createGameInfo(HandType.FULL_HOUSE, HandTypeValue.FULL_HOUSE);
-      else return createGameInfo(HandType.THREE_OF_A_KIND, HandTypeValue.THREE_OF_A_KIND);
+      if (topTwoValues[1][1] === 2)
+        return createGameInfo(
+          HandType.FULL_HOUSE,
+          HandTypeValue.FULL_HOUSE + 3 * cardValues[topTwoValues[0][0]] + 2 * cardValues[topTwoValues[1][0]]
+        );
+      else
+        return createGameInfo(
+          HandType.THREE_OF_A_KIND,
+          HandTypeValue.THREE_OF_A_KIND + 3 * cardValues[topTwoValues[0][0]]
+        );
     case 2:
-      if (topTwoValues[1][1] === 2) return createGameInfo(HandType.TWO_PAIRS, HandTypeValue.TWO_PAIRS);
-      else return createGameInfo(HandType.ONE_PAIR, HandTypeValue.ONE_PAIR);
+      if (topTwoValues[1][1] === 2)
+        return createGameInfo(
+          HandType.TWO_PAIRS,
+          HandTypeValue.TWO_PAIRS + 2 * cardValues[topTwoValues[0][0]] + 2 * cardValues[topTwoValues[1][0]]
+        );
+      else return createGameInfo(HandType.ONE_PAIR, HandTypeValue.ONE_PAIR + 2 * cardValues[topTwoValues[0][0]]);
     default:
-      return createGameInfo(HandType.HIGH_CARD, HandTypeValue.HIGH_CARD);
+      return createGameInfo(HandType.HIGH_CARD, HandTypeValue.HIGH_CARD + cardValues[topTwoValues[0][0]]);
   }
 };
 
@@ -134,4 +146,6 @@ const summedResult: number = rankedGames.reduce(
   (sum: number, game: AdvancedGameInfoWithRanking) => sum + game.gameWorth,
   0
 );
+
+// I assumed that if there is a tie in e.g. two pairs, the higher value in cards should win
 console.log(summedResult);
