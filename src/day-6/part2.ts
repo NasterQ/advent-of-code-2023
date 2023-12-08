@@ -32,25 +32,21 @@ function getRaces(timesArray: string[][]): RaceInfo[] {
   return races;
 }
 
-function analiseRaces(raceList: RaceInfo[]): RaceInfoDetailed[] {
-  const detailedRaces: RaceInfoDetailed[] = raceList.reduce((races: RaceInfoDetailed[], race: RaceInfo) => {
+function analiseRaces(raceList: RaceInfo[]): number {
+  const possibilities: number = raceList.reduce((count: number, race: RaceInfo) => {
     const rTime: number = race.time;
     const rRecord: number = race.recordDistance;
-    const beatingPossibilities: number[] = range(1, rTime).reduce((beatingTimes: number[], holdTime: number) => {
+    const beatingPossibilitiesCount: number = range(1, rTime).reduce((beatingTimes: number, holdTime: number) => {
       const possibleTime: number = holdTime * (rTime - holdTime);
-      if (possibleTime > rRecord) return [...beatingTimes, possibleTime];
+      if (possibleTime > rRecord) return ++beatingTimes;
       else return beatingTimes;
-    }, []);
-    return [...races, { ...race, beatingPossibilities }];
-  }, []);
+    }, 0);
+    return count + beatingPossibilitiesCount;
+  }, 0);
 
-  return detailedRaces;
+  return possibilities;
 }
 
-const multiplyBeatingPossibilities = (detailedRaceList: RaceInfoDetailed[]): number =>
-  detailedRaceList.reduce((product: number, race: RaceInfoDetailed) => product * race.beatingPossibilities.length, 1);
-
 const races: RaceInfo[] = getRaces(splitData(data));
-const detailedRaces: RaceInfoDetailed[] = analiseRaces(races);
-const result: number = multiplyBeatingPossibilities(detailedRaces);
-console.log(result);
+const beatingPossibilities: number = analiseRaces(races);
+console.log(beatingPossibilities);
