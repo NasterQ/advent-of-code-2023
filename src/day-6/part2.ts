@@ -6,10 +6,6 @@ interface RaceInfo {
   recordDistance: number;
 }
 
-interface RaceInfoDetailed extends RaceInfo {
-  beatingPossibilities: number[];
-}
-
 const splitData = (dataString: string): string[][] =>
   dataString
     .replace(/ /g, '')
