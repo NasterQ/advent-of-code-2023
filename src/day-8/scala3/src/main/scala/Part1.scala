@@ -1,27 +1,6 @@
-case class Node(baseNode: String, routes: List[String])
-
-def data: List[String] = {
-  import scala.io.Source
-  val plik = Source.fromFile("src/main/data/data.txt", "UTF-8")
-  plik.getLines.toList
-}
-
-def getDirections(dataString: List[String]): List[Node] = {
-  val directionsArray = dataString.slice(2, dataString.length).map((row) => row.split(" = ").toList)
-
-  val directions = directionsArray.foldLeft(List[Node]())((directionsList, directionRow) => {
-    val baseNode = directionRow(0)
-    val routes = directionRow(1).replaceAll("[()]", "").split(", ").toList
-    directionsList :+ Node(baseNode, routes)
-  })
-  directions
-}
+package day8
 
 def calculateSteps(instruction: String, directions: List[Node]) = {
-  val directionValues: Map[String, Int] = Map(
-    "L" -> 0,
-    "R" -> 1
-  )
 
   val startNode: Node = directions.find((node: Node) => node.baseNode == "AAA").get
   val translatedInstructions: List[Int] =
@@ -33,7 +12,9 @@ def calculateSteps(instruction: String, directions: List[Node]) = {
     else
       traverse(
         currInstructions.tail,
-        directions.find((node: Node) => node.baseNode == currNode.routes(currInstructions(0))).get,
+        directions
+          .find((node: Node) => node.baseNode == currNode.routes(currInstructions.head))
+          .get,
         steps + 1
       )
   }
@@ -42,8 +23,9 @@ def calculateSteps(instruction: String, directions: List[Node]) = {
 }
 
 @main def part1: Unit = {
-  val instructions: String = data(0)
-  val directions: List[Node] = getDirections(data)
+  val mapData: List[String] = loadData("src/main/data/data.txt")
+  val instructions: String = mapData(0)
+  val directions: List[Node] = getDirections(mapData)
   val steps: Int = calculateSteps(instructions, directions)
   println(steps)
 }
