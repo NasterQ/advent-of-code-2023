@@ -20,28 +20,23 @@ def calculateSimultaneuosSteps(instruction: String, directions: List[Node]) = {
   // )
   // println("=============")
 
-  def traverse(currInstructions: List[Int], currNodes: List[Node], steps: Int = 0): Int = {
-    println(s"$steps $currNodes")
-    if (currNodes.forall((node: Node) => node.baseNode.endsWith("Z"))) steps
-    else if (currInstructions.length == 0) traverse(translatedInstructions, currNodes, steps)
-    else
-      traverse(
-        currInstructions.tail,
-        directions
-          .filter((node: Node) => currNodes.flatMap(_.routes).contains(node.baseNode)),
-        steps + 1
-      )
-
-  }
+  def traverse(currInstruction: Int, currNode: Node): Node =
+    directions.find((node: Node) => node.baseNode == currNode.routes(currInstruction)).get
 
   def dispatcher(
       currInstructions: List[Int],
       currentNodes: List[Node],
-      currentValues: List[Node] = List[Node](),
+      pathQuantity: Int,
+      obtainedNodes: List[Node] = List[Node](),
       steps: Int = 0
-  ) = {}
+  ) = {
+    if (currentNodes.forall((node: Node) => node.baseNode.endsWith("Z"))) steps
+    else if (currInstructions.length == 0)
+      dispatcher(translatedInstructions, currentNodes, currentNodes.length, obtainedNodes, steps)
+    else 3
+  }
 
-  dispatcher(translatedInstructions, startNodes)
+  dispatcher(translatedInstructions, startNodes, startNodes.length)
 }
 
 @main def part2: Unit = {
